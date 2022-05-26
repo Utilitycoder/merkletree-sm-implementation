@@ -34,6 +34,22 @@ describe("Confirm if merkle root is working", () => {
             hashLeaves: true,
             sortPairs: true
         })
+        // Compute the Merkle Root
+        const root = merkleTree.getHexRoot()
+
+        // Let's deploy our smart contract
+        const whitelist = await ethers.getContractFactory("Whitelist")
+        const Whitelist = await whitelist.deploy(root)
+        await Whitelist.deployed()
+
+        // Compute the merkle proof of the owner address offchain. 
+        const leaf = keccak256(list[0])
+        const proof = merkleTree.getHexProof(leaf)
+
+        // Provide the Merkle Proof to the contract, and ensure that it can verify
+        // that this leaf node was indeed part of the Merkle Tree
+        let verified = await Whitelist.checkInWhitelist(proof, 2)
+
 
     })
 })
@@ -42,25 +58,6 @@ describe("Check if merkle root is working", function () {
 
 
  
-    const merkleTree = new MerkleTree(list, keccak256, {
-      hashLeaves: true,
-      sortPairs: true,
-    });
-    // Compute the Merkle Root
-    const root = merkleTree.getHexRoot();
-
-    // Deploy the Whitelist contract
-    const whitelist = await ethers.getContractFactory("Whitelist");
-    const Whitelist = await whitelist.deploy(root);
-    await Whitelist.deployed();
-
-    // Compute the Merkle Proof of the owner address (0'th item in list)
-    // off-chain. The leaf node is the hash of that value.
-    const leaf = keccak256(list[0]);
-    const proof = merkleTree.getHexProof(leaf);
-
-    // Provide the Merkle Proof to the contract, and ensure that it can verify
-    // that this leaf node was indeed part of the Merkle Tree
     let verified = await Whitelist.checkInWhitelist(proof, 2);
     expect(verified).to.equal(true);
     
