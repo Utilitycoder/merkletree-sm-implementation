@@ -1,4 +1,3 @@
-
 const { expect, assert } = require("chai")
 const { ethers } = require("hardhat")
 const keccak256 = require("keccak256")
@@ -49,7 +48,7 @@ describe("Confirm if merkle root is working", () => {
         // Provide the Merkle Proof to the contract, and ensure that it can verify
         // that this leaf node was indeed part of the Merkle Tree
         let verified = await Whitelist.checkInWhitelist(proof, 2)
-        assert.equal(verified, true)
+        expect(verified).to.equal(true)
 
         // Provide an invalid Merkle Proof to the contract, and ensure that
         // it can verify that this leaf node was NOT part of the Merkle Tree
