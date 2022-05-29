@@ -12,7 +12,7 @@ contract Whitelist {
     }
 
     function checkInWhitelist(bytes32[] calldata proof, uint64 maxAllowanceToMint) view public returns (bool) {
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender, maxAllowanceToMint));
+        bytes32 leaf = keccak256(abi.encode(msg.sender, maxAllowanceToMint));
         bool verified = MerkleProof.verify(proof, merkleRoot, leaf);
         return verified;
     }
